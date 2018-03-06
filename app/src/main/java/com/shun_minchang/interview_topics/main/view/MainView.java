@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.shun_minchang.interview_topics.main.model.DailyQuote;
 import com.shun_minchang.interview_topics.main.presenter.IMainPresenter;
 import com.shun_minchang.interview_topics.main.presenter.MainPresenter;
 import com.shun_minchang.interview_topics.utils.Constants;
@@ -98,8 +99,7 @@ public class MainView extends AppCompatActivity implements IMainView {
         int contentTextSize = 28;
         mTVDailyContent = new TextView(this);
         mTVDailyContent.setId(TV_DAILY_CONTENT);
-        mTVDailyContent.setText("我是每日一句");
-        mTVDailyContent.setGravity(Gravity.CENTER);
+        mTVDailyContent.setGravity(Gravity.LEFT);
         mTVDailyContent.setTextSize(contentTextSize);
         mCLRootView.addView(mTVDailyContent);
         // ConstraintSet
@@ -119,8 +119,7 @@ public class MainView extends AppCompatActivity implements IMainView {
         int sourceTextSize = 16;
         mTVDailySource = new TextView(this);
         mTVDailySource.setId(TV_DAILY_SOURCE);
-        mTVDailySource.setText("我是每日一句的來源");
-        mTVDailySource.setGravity(Gravity.RIGHT | Gravity.CENTER);
+        mTVDailySource.setGravity(Gravity.RIGHT);
         mTVDailySource.setTextSize(sourceTextSize);
         mCLRootView.addView(mTVDailySource);
         // ConstraintSet
@@ -172,7 +171,8 @@ public class MainView extends AppCompatActivity implements IMainView {
                     return;
                 switch (action) {
                     case Constants.ACTION_GET_DAILY_QUOTE:
-                        mHandler.post(() -> updateDailyQuote());
+                        DailyQuote dailyQuote = intent.getParcelableExtra("DAILY_QUOTE");
+                        mHandler.post(() -> updateDailyQuote(dailyQuote));
                         break;
                     case Constants.ACTION_GET_WEATHER_OF_WEEK:
                         mHandler.post(() -> updateWeatherList());
@@ -182,8 +182,10 @@ public class MainView extends AppCompatActivity implements IMainView {
         };
     }
 
-    private void updateDailyQuote() {
+    private void updateDailyQuote(DailyQuote dailyQuote) {
         // TODO: 2018/3/7 更新每日一句
+        mTVDailyContent.setText(dailyQuote.getContent());
+        mTVDailySource.setText(dailyQuote.getSource());
     }
 
     private void updateWeatherList() {
@@ -240,7 +242,7 @@ public class MainView extends AppCompatActivity implements IMainView {
                         dialog.dismiss();
                     }).show();
         } else {
-            mMainPresenter.getDailyQuote();
+            mMainPresenter.getDailyQuote(this);
             mMainPresenter.getWeatherOfWeek();
         }
     }

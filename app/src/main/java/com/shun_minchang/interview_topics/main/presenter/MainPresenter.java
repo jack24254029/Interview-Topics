@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.util.Log;
 
+import com.shun_minchang.interview_topics.main.network.NetWorkController;
 import com.shun_minchang.interview_topics.main.view.IMainView;
 
 import java.net.InetAddress;
@@ -71,8 +72,9 @@ public class MainPresenter implements IMainPresenter {
     }
 
     @Override
-    public void getDailyQuote() {
+    public void getDailyQuote(Context context) {
         // TODO: 2018/3/7 發送每日一句的網路請求
+        NetWorkController.getInstance().getDailyQuote(context);
     }
 
     @Override

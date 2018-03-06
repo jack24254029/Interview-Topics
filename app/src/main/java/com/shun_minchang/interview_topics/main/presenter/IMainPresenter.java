@@ -19,7 +19,7 @@ public interface IMainPresenter {
     void checkNetwork(Context context);
 
     // 取得每日一句
-    void getDailyQuote();
+    void getDailyQuote(Context context);
 
     // 取得一週天氣
     void getWeatherOfWeek();

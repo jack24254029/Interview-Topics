@@ -16,7 +16,7 @@
 
 - 架構：MVP (先暫時保留網路層)
 - Locale DB：Room
-- 網路框架：Retrofit2
+- 網路框架：OkHttp3
 
 ## 目錄結構
 
