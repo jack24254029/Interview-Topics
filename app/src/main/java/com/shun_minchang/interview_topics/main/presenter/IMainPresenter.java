@@ -1,18 +1,22 @@
 package com.shun_minchang.interview_topics.main.presenter;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+
 /**
  * Created by shun-minchang on 2018/3/7.
  */
 
 public interface IMainPresenter {
     // 註冊網路監聽(用於網路請求完成或失敗)
-    void registerNetworkBroadcastReceiver();
+    void registerNetworkBroadcastReceiver(Context context, BroadcastReceiver broadcastReceiver, IntentFilter intentFilter);
 
     // 反註冊網路監聽
-    void unregisterNetworkBroadcastReceiver();
+    void unregisterNetworkBroadcastReceiver(Context context, BroadcastReceiver broadcastReceiver);
 
     // 檢察網路狀態
-    void checkNetwork();
+    void checkNetwork(Context context);
 
     // 取得每日一句
     void getDailyQuote();

@@ -12,9 +12,23 @@
   Tips:
   建議使用 Broadcast在模組間傳遞資訊
 
-## 備註
+## 專案使用技術
 
-1. Source code 請 push 到 GitHub public repository, 並 commit 完整的開發歷程
-2. 完成後請提供 GitHub URL
-3. Android Project請使用 Android Studio 3.0實作
-4. 請告知何時可提交程式 
+- 架構：MVP (先暫時保留網路層)
+- Locale DB：Room
+- 網路框架：Retrofit2
+
+## 目錄結構
+
+- main
+  - database
+  - model
+  - presenter
+    - IMainPresenter
+    - MainPresenter
+  - view
+    - IMainView
+    - MainView
+- utils
+  - Utils
+  - Constants

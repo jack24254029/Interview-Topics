@@ -1,17 +1,27 @@
 package com.shun_minchang.interview_topics.main.view;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.shun_minchang.interview_topics.main.presenter.IMainPresenter;
+import com.shun_minchang.interview_topics.main.presenter.MainPresenter;
+import com.shun_minchang.interview_topics.utils.Constants;
 import com.shun_minchang.interview_topics.utils.Utils;
 
 public class MainView extends AppCompatActivity implements IMainView {
@@ -29,6 +39,10 @@ public class MainView extends AppCompatActivity implements IMainView {
     private static final int PB_PROGRESS = 565;
 
     private static final String TAG = "MainView";
+    private IMainPresenter mMainPresenter;
+    private BroadcastReceiver mBroadcastReceiver;
+    private Handler mHandler;
+    private IntentFilter mIntentFilter;
     private ConstraintLayout mCLRootView;
     private TextView mTVDailyContent, mTVDailySource;
     private RecyclerView mRVWeatherList;
@@ -51,6 +65,9 @@ public class MainView extends AppCompatActivity implements IMainView {
         initDailyQuoteView();
         // Init Weather List View
         initWeatherListView();
+        // Init BroadcastReceiver
+        initBroadcastReceiver();
+        mHandler = new Handler();
     }
 
     private void initProgressView() {
@@ -143,10 +160,43 @@ public class MainView extends AppCompatActivity implements IMainView {
         mConstraintSet.applyTo(mCLRootView);
     }
 
+    private void initBroadcastReceiver() {
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Constants.ACTION_GET_DAILY_QUOTE);
+        mIntentFilter.addAction(Constants.ACTION_GET_WEATHER_OF_WEEK);
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action == null || mHandler == null)
+                    return;
+                switch (action) {
+                    case Constants.ACTION_GET_DAILY_QUOTE:
+                        mHandler.post(() -> updateDailyQuote());
+                        break;
+                    case Constants.ACTION_GET_WEATHER_OF_WEEK:
+                        mHandler.post(() -> updateWeatherList());
+                        break;
+                }
+            }
+        };
+    }
+
+    private void updateDailyQuote() {
+        // TODO: 2018/3/7 更新每日一句
+    }
+
+    private void updateWeatherList() {
+        // TODO: 2018/3/7 更新天氣資訊列表
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart: ");
+        mMainPresenter = new MainPresenter(this);
+        mMainPresenter.registerNetworkBroadcastReceiver(this, mBroadcastReceiver, mIntentFilter);
+        mMainPresenter.checkNetwork(this);
     }
 
     @Override
@@ -165,11 +215,33 @@ public class MainView extends AppCompatActivity implements IMainView {
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop: ");
+        mMainPresenter.unregisterNetworkBroadcastReceiver(this, mBroadcastReceiver);
+        // TODO: 2018/3/7 釋放資源
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
+    }
+
+    @Override
+    public void onNetworkChecked(boolean enabled) {
+        Log.d(TAG, "onNetworkChecked: " + enabled);
+        mPBProgress.setVisibility(View.GONE);
+        if (!enabled) {
+            new AlertDialog.Builder(this)
+                    .setCancelable(false)
+                    .setTitle("警告")
+                    .setMessage("請檢查網路狀態!!")
+                    .setPositiveButton("確認", (dialog, which) -> {
+                        mMainPresenter.checkNetwork(this);
+                        mPBProgress.setVisibility(View.VISIBLE);
+                        dialog.dismiss();
+                    }).show();
+        } else {
+            mMainPresenter.getDailyQuote();
+            mMainPresenter.getWeatherOfWeek();
+        }
     }
 }
