@@ -30,9 +30,14 @@
 - UI Test：Espresso 3.0
 
 ## Unit Test
-- EntityTest 測試DB的寫入及讀取
+
+- EntityTest
+  - 測試Room寫入資料
+  - 測試Room讀取資料
+  - 測試Room刪除資料
 
 ## UI Test
+
 - MainViewTest 
   - 檢查1秒內，取得一週天氣，且要有14筆資料
   - 檢查3秒內，要取得每日一句
