@@ -1,24 +1,24 @@
 ## 目錄結構
 
+- database
+  - dao
+    - WeatherDao.java
+  - entities
+    - Weather.java
+  - service
+    - DBJobService.java
+  - WeatherDatabase.java
 - main
-  - database
-    - dao
-      - WeatherDao.java
-    - entities
-      - Weather.java
-    - service
-      - DBJobService.java
-    - WeatherDatabase.java
   - model
     - DailyQuote.java
-  - network
-    - NetwrokController.java
   - presenter
     - IMainPresenter.java
     - MainPresenter.java
   - view
     - IMainView.java
     - MainView.java
+- network
+  - NetwrokController.java
 - utils
   - Utils.java
   - Constants.java
