@@ -1,5 +1,8 @@
 # InterView-Topics
 
+## 基本資訊
+- Android系統最低需求為Android Lollipop (5.0)
+
 ## 功能需求
 
 - 透過 <http://www.cwb.gov.tw/V7/service/eservice/rss.htm> 取得台中市 最近一週的天氣預報, 抓取日期, 溫度, 天氣 …
