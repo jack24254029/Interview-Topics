@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
@@ -14,18 +15,27 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.shun_minchang.interview_topics.R;
+import com.shun_minchang.interview_topics.database.entities.Weather;
+import com.shun_minchang.interview_topics.main.adapter.WeatherRVAdapter;
 import com.shun_minchang.interview_topics.main.model.DailyQuote;
 import com.shun_minchang.interview_topics.main.presenter.IMainPresenter;
 import com.shun_minchang.interview_topics.main.presenter.MainPresenter;
 import com.shun_minchang.interview_topics.utils.Constants;
 import com.shun_minchang.interview_topics.utils.Utils;
 
-public class MainView extends AppCompatActivity implements IMainView {
+import java.util.List;
+
+public class MainView extends AppCompatActivity implements IMainView,
+        WeatherRVAdapter.OnLongClickListener {
     /**
      * UI Ids
      * CL = ConstraintLayout
@@ -46,9 +56,10 @@ public class MainView extends AppCompatActivity implements IMainView {
     private IntentFilter mIntentFilter;
     private ConstraintLayout mCLRootView;
     private TextView mTVDailyContent, mTVDailySource;
-    private RecyclerView mRVWeatherList;
     private ConstraintSet mConstraintSet;
     private ProgressBar mPBProgress;
+    private WeatherRVAdapter mWeatherRVAdapter;
+    private boolean isHasDaily, isHasWeather;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +80,8 @@ public class MainView extends AppCompatActivity implements IMainView {
         // Init BroadcastReceiver
         initBroadcastReceiver();
         mHandler = new Handler();
+        isHasDaily = false;
+        isHasWeather = false;
     }
 
     private void initProgressView() {
@@ -139,10 +152,20 @@ public class MainView extends AppCompatActivity implements IMainView {
         Log.d(TAG, "initWeatherListView: ");
         // Init Weather List
         int LIST_MARGIN = Utils.dpToPx(this, 8);
-        mRVWeatherList = new RecyclerView(this);
+        mWeatherRVAdapter = new WeatherRVAdapter();
+        mWeatherRVAdapter.setOnLongClickListener(this);
+        RecyclerView mRVWeatherList = new RecyclerView(this);
         mRVWeatherList.setId(RV_WEATHER_LIST);
         mRVWeatherList.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false));
+        mRVWeatherList.setAdapter(mWeatherRVAdapter);
+        mRVWeatherList.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                outRect.bottom = Utils.dpToPx(view.getContext(), 16);
+            }
+        });
         mCLRootView.addView(mRVWeatherList);
         // ConstraintSet
         mConstraintSet = new ConstraintSet();
@@ -171,11 +194,14 @@ public class MainView extends AppCompatActivity implements IMainView {
                     return;
                 switch (action) {
                     case Constants.ACTION_GET_DAILY_QUOTE:
-                        DailyQuote dailyQuote = intent.getParcelableExtra("DAILY_QUOTE");
+                        // 收到每日一句的資料
+                        DailyQuote dailyQuote = intent.getParcelableExtra(getString(R.string.key_daily_quote));
                         mHandler.post(() -> updateDailyQuote(dailyQuote));
                         break;
                     case Constants.ACTION_GET_WEATHER_OF_WEEK:
-                        mHandler.post(() -> updateWeatherList());
+                        // 收到台中市的一週天氣預報資料
+                        List<Weather> weatherList = intent.getParcelableArrayListExtra(getString(R.string.key_weather_of_week));
+                        mHandler.post(() -> updateWeatherList(weatherList));
                         break;
                 }
             }
@@ -183,13 +209,24 @@ public class MainView extends AppCompatActivity implements IMainView {
     }
 
     private void updateDailyQuote(DailyQuote dailyQuote) {
-        // TODO: 2018/3/7 更新每日一句
+        isHasDaily = true;
         mTVDailyContent.setText(dailyQuote.getContent());
         mTVDailySource.setText(dailyQuote.getSource());
+        checkGetDataFinish();
     }
 
-    private void updateWeatherList() {
-        // TODO: 2018/3/7 更新天氣資訊列表
+    private void updateWeatherList(List<Weather> weatherList) {
+        isHasWeather = true;
+        mWeatherRVAdapter.setWeatherList(weatherList);
+        checkGetDataFinish();
+    }
+
+    private void checkGetDataFinish() {
+        if (isHasDaily && isHasWeather) {
+            mPBProgress.setVisibility(View.GONE);
+        } else {
+            mPBProgress.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -218,7 +255,8 @@ public class MainView extends AppCompatActivity implements IMainView {
         super.onStop();
         Log.d(TAG, "onStop: ");
         mMainPresenter.unregisterNetworkBroadcastReceiver(this, mBroadcastReceiver);
-        // TODO: 2018/3/7 釋放資源
+        mMainPresenter.release();
+        mMainPresenter = null;
     }
 
     @Override
@@ -228,9 +266,26 @@ public class MainView extends AppCompatActivity implements IMainView {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.refresh) {
+            isHasWeather = false;
+            mWeatherRVAdapter.deleteAll();
+            mMainPresenter.getWeatherOfWeek(this);
+            checkGetDataFinish();
+        }
+        return true;
+    }
+
+    @Override
     public void onNetworkChecked(boolean enabled) {
         Log.d(TAG, "onNetworkChecked: " + enabled);
-        mPBProgress.setVisibility(View.GONE);
         if (!enabled) {
             new AlertDialog.Builder(this)
                     .setCancelable(false)
@@ -243,7 +298,24 @@ public class MainView extends AppCompatActivity implements IMainView {
                     }).show();
         } else {
             mMainPresenter.getDailyQuote(this);
-            mMainPresenter.getWeatherOfWeek();
+            mMainPresenter.getWeatherOfWeek(this);
         }
+    }
+
+    @Override
+    public void onLongClick(Weather weather) {
+        if (mPBProgress.getVisibility() == View.VISIBLE)
+            return;
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle("警告!!")
+                .setMessage("確定要刪除這筆資料嗎?")
+                .setPositiveButton("確定", (dialog, which) -> {
+                    mMainPresenter.deleteWeatherData(getApplicationContext(), weather);
+                    mWeatherRVAdapter.delete(weather);
+                    dialog.dismiss();
+                })
+                .setNegativeButton("取消", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 }
