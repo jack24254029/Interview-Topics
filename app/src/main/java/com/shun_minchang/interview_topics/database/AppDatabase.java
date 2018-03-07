@@ -12,24 +12,24 @@ import com.shun_minchang.interview_topics.database.entities.Weather;
  * Created by shun-minchang on 2018/3/7.
  */
 @Database(entities = {Weather.class}, version = 1)
-public abstract class WeatherDatabase extends RoomDatabase {
-    public static final String DB_NAME = "Weather";
-    private static WeatherDatabase INSTANCE;
+public abstract class AppDatabase extends RoomDatabase {
+    public static final String DB_NAME = "AppDatabase";
+    private static AppDatabase INSTANCE;
 
     public abstract WeatherDao weatherDao();
 
-    public static WeatherDatabase getDatabase(Context context) {
+    public static AppDatabase getDatabase(Context context) {
         if (INSTANCE == null) {
             INSTANCE = Room
                     .databaseBuilder(context,
-                            WeatherDatabase.class,
-                            WeatherDatabase.DB_NAME)
+                            AppDatabase.class,
+                            AppDatabase.DB_NAME)
                     .build();
         }
         return INSTANCE;
     }
 
-    public static void destoryInstance() {
+    public static void destroyInstance() {
         if (INSTANCE != null)
             INSTANCE.close();
         INSTANCE = null;

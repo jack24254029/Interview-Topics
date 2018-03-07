@@ -6,7 +6,7 @@ import android.support.v4.app.JobIntentService;
 import android.util.Log;
 
 import com.shun_minchang.interview_topics.R;
-import com.shun_minchang.interview_topics.database.WeatherDatabase;
+import com.shun_minchang.interview_topics.database.AppDatabase;
 import com.shun_minchang.interview_topics.database.dao.WeatherDao;
 import com.shun_minchang.interview_topics.database.entities.Weather;
 import com.shun_minchang.interview_topics.utils.Constants;
@@ -30,7 +30,7 @@ public class DBJobService extends JobIntentService {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
-        weatherDao = WeatherDatabase.getDatabase(this).weatherDao();
+        weatherDao = AppDatabase.getDatabase(this).weatherDao();
     }
 
     @Override
@@ -68,6 +68,6 @@ public class DBJobService extends JobIntentService {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
         weatherDao = null;
-        WeatherDatabase.destoryInstance();
+        AppDatabase.destroyInstance();
     }
 }
