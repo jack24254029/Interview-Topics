@@ -6,15 +6,13 @@
 - 資料取得之後存入 local 資料庫
 - 頁面 UI 提供資料列表瀏灠上列資料
 - 提供刪除某一筆資料的功能
-- 抓取底下網頁的每日一句，一併顯示於畫面中。
-  https://tw.appledaily.com/index/dailyquote/
+- 抓取 <https://tw.appledaily.com/index/dailyquote/> 網頁的每日一句，一併顯示於畫面中。
 
 加分: (可不實作)
 
 - 程式架構須符合 MVC-n
-<https://academy.realm.io/posts/slug-marcus-zarra-exploring-mvcn-swift/>
-Tips:
-建議使用 Broadcast在模組間傳遞資訊
+- <https://academy.realm.io/posts/slug-marcus-zarra-exploring-mvcn-swift/>
+- Tips:建議使用 Broadcast在模組間傳遞資訊
 
 ## 專案技術
 
