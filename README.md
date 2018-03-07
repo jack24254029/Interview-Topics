@@ -32,9 +32,9 @@
 ## Unit Test
 
 - EntityTest
-  - 測試Room寫入資料
-  - 測試Room讀取資料
-  - 測試Room刪除資料
+  - 測試Room寫入資料
+  - 測試Room讀取資料
+  - 測試Room刪除資料
 
 ## UI Test
 
