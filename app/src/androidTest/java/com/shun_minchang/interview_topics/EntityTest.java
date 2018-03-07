@@ -5,7 +5,7 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.shun_minchang.interview_topics.database.WeatherDatabase;
+import com.shun_minchang.interview_topics.database.AppDatabase;
 import com.shun_minchang.interview_topics.database.dao.WeatherDao;
 import com.shun_minchang.interview_topics.database.entities.Weather;
 
@@ -23,18 +23,18 @@ import java.util.List;
 @RunWith(AndroidJUnit4.class)
 public class EntityTest {
     private WeatherDao weatherDao;
-    private WeatherDatabase weatherDatabase;
+    private AppDatabase appDatabase;
 
     @Before
     public void createDB() {
         Context context = InstrumentationRegistry.getTargetContext();
-        weatherDatabase = Room.inMemoryDatabaseBuilder(context, WeatherDatabase.class).build();
-        weatherDao = weatherDatabase.weatherDao();
+        appDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
+        weatherDao = appDatabase.weatherDao();
     }
 
     @After
     public void closeDb() throws IOException {
-        weatherDatabase.close();
+        appDatabase.close();
     }
 
     @Test
