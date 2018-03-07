@@ -12,9 +12,9 @@
 加分: (可不實作)
 
 - 程式架構須符合 MVC-n
-  <https://academy.realm.io/posts/slug-marcus-zarra-exploring-mvcn-swift/>
-  Tips:
-  建議使用 Broadcast在模組間傳遞資訊
+<https://academy.realm.io/posts/slug-marcus-zarra-exploring-mvcn-swift/>
+Tips:
+建議使用 Broadcast在模組間傳遞資訊
 
 ## 專案技術
 
