@@ -1,10 +1,8 @@
-# InterView-Topic
+# InterView-Topics
 
 ## 功能需求
 
 - 透過 <http://www.cwb.gov.tw/V7/service/eservice/rss.htm> 取得台中市 最近一週的天氣預報, 抓取日期, 溫度, 天氣 …
-
-
 - 資料取得之後存入 local 資料庫
 - 頁面 UI 提供資料列表瀏灠上列資料
 - 提供刪除某一筆資料的功能
