@@ -17,13 +17,13 @@
 ## 專案技術
 
 - 專案架構：MVP-N
-- 資料庫：Room
+- 資料庫：[Room](https://developer.android.com/topic/libraries/architecture/room.html)
 - 第三方Library：
-  - OkHttp3
-  - Jsoup
-  - RssParser
-- Unit Test：JUnit4
-- UI Test：Espresso 3.0
+  - [OkHttp3](https://github.com/square/okhttp/tree/master/okhttp/src/main/java/okhttp3)
+  - [Jsoup](https://github.com/jhy/jsoup)
+  - [RssParser](https://github.com/prof18/RSS-Parser)
+- Unit Test：[JUnit](https://developer.android.com/training/testing/unit-testing/local-unit-tests.html)
+- UI Test：[Espresso](https://developer.android.com/training/testing/espresso/index.html)
 
 ## Unit Test
 
@@ -35,8 +35,8 @@
 ## UI Test
 
 - MainViewTest 
-  - 檢查1秒內，取得一週天氣，且要有14筆資料
-  - 檢查3秒內，要取得每日一句
+  - 檢查1秒內取得一週天氣，且要有14筆資料
+  - 檢查3秒內取得每日一句
 
 ## 目錄結構
 
