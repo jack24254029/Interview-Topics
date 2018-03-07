@@ -4,13 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Rect;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,7 +34,7 @@ import com.shun_minchang.interview_topics.main.presenter.MainPresenter;
 import com.shun_minchang.interview_topics.utils.Constants;
 import com.shun_minchang.interview_topics.utils.Utils;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class MainView extends AppCompatActivity implements IMainView,
         WeatherRVAdapter.OnLongClickListener {
@@ -43,11 +45,11 @@ public class MainView extends AppCompatActivity implements IMainView,
      * RV = RecyclerView
      * PB = ProgressBar
      */
-    private static final int CL_ROOT_VIEW = 241;
-    private static final int TV_DAILY_CONTENT = 572;
-    private static final int TV_DAILY_SOURCE = 350;
-    private static final int RV_WEATHER_LIST = 6;
-    private static final int PB_PROGRESS = 565;
+    public static final int CL_ROOT_VIEW = 241;
+    public static final int TV_DAILY_CONTENT = 572;
+    public static final int TV_DAILY_SOURCE = 350;
+    public static final int RV_WEATHER_LIST = 6;
+    public static final int PB_PROGRESS = 565;
 
     private static final String TAG = "MainView";
     private IMainPresenter mMainPresenter;
@@ -114,6 +116,8 @@ public class MainView extends AppCompatActivity implements IMainView,
         mTVDailyContent.setId(TV_DAILY_CONTENT);
         mTVDailyContent.setGravity(Gravity.LEFT);
         mTVDailyContent.setTextSize(contentTextSize);
+        mTVDailyContent.setTextColor(Color.BLACK);
+        mTVDailyContent.setTypeface(mTVDailyContent.getTypeface(), Typeface.BOLD_ITALIC);
         mCLRootView.addView(mTVDailyContent);
         // ConstraintSet
         mConstraintSet = new ConstraintSet();
@@ -134,6 +138,8 @@ public class MainView extends AppCompatActivity implements IMainView,
         mTVDailySource.setId(TV_DAILY_SOURCE);
         mTVDailySource.setGravity(Gravity.RIGHT);
         mTVDailySource.setTextSize(sourceTextSize);
+        mTVDailySource.setTextColor(Color.BLACK);
+        mTVDailySource.setTypeface(mTVDailySource.getTypeface(), Typeface.BOLD_ITALIC);
         mCLRootView.addView(mTVDailySource);
         // ConstraintSet
         mConstraintSet = new ConstraintSet();
@@ -159,13 +165,10 @@ public class MainView extends AppCompatActivity implements IMainView,
         mRVWeatherList.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false));
         mRVWeatherList.setAdapter(mWeatherRVAdapter);
-        mRVWeatherList.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                super.getItemOffsets(outRect, view, parent, state);
-                outRect.bottom = Utils.dpToPx(view.getContext(), 16);
-            }
-        });
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
+                mRVWeatherList.getContext(),
+                ((LinearLayoutManager) mRVWeatherList.getLayoutManager()).getOrientation());
+        mRVWeatherList.addItemDecoration(dividerItemDecoration);
         mCLRootView.addView(mRVWeatherList);
         // ConstraintSet
         mConstraintSet = new ConstraintSet();
@@ -200,7 +203,7 @@ public class MainView extends AppCompatActivity implements IMainView,
                         break;
                     case Constants.ACTION_GET_WEATHER_OF_WEEK:
                         // 收到台中市的一週天氣預報資料
-                        List<Weather> weatherList = intent.getParcelableArrayListExtra(getString(R.string.key_weather_of_week));
+                        ArrayList<Weather> weatherList = intent.getParcelableArrayListExtra(getString(R.string.key_weather_of_week));
                         mHandler.post(() -> updateWeatherList(weatherList));
                         break;
                 }
@@ -215,7 +218,7 @@ public class MainView extends AppCompatActivity implements IMainView,
         checkGetDataFinish();
     }
 
-    private void updateWeatherList(List<Weather> weatherList) {
+    private void updateWeatherList(ArrayList<Weather> weatherList) {
         isHasWeather = true;
         mWeatherRVAdapter.setWeatherList(weatherList);
         checkGetDataFinish();
@@ -234,7 +237,8 @@ public class MainView extends AppCompatActivity implements IMainView,
         super.onStart();
         Log.d(TAG, "onStart: ");
         mMainPresenter = new MainPresenter(this);
-        mMainPresenter.registerNetworkBroadcastReceiver(this, mBroadcastReceiver, mIntentFilter);
+        mMainPresenter.registerNetworkBroadcastReceiver(
+                this, mBroadcastReceiver, mIntentFilter);
         mMainPresenter.checkNetwork(this);
     }
 
@@ -275,8 +279,12 @@ public class MainView extends AppCompatActivity implements IMainView,
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh) {
+            isHasDaily = false;
             isHasWeather = false;
             mWeatherRVAdapter.deleteAll();
+            mTVDailyContent.setText("");
+            mTVDailySource.setText("");
+            mMainPresenter.getDailyQuote(this);
             mMainPresenter.getWeatherOfWeek(this);
             checkGetDataFinish();
         }

@@ -13,7 +13,6 @@ import com.shun_minchang.interview_topics.R;
 import com.shun_minchang.interview_topics.database.entities.Weather;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by shun-minchang on 2018/3/7.
@@ -21,7 +20,7 @@ import java.util.List;
 
 public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.WeatherViewHolder> {
     private static final String TAG = "WeatherRVAdapter";
-    private List<Weather> weatherList;
+    private ArrayList<Weather> weatherList;
     private OnLongClickListener mOnLongClickListener;
 
     public interface OnLongClickListener {
@@ -60,7 +59,7 @@ public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.Weat
         return weatherList.size();
     }
 
-    public void setWeatherList(List<Weather> weatherList) {
+    public void setWeatherList(ArrayList<Weather> weatherList) {
         this.weatherList = weatherList;
         notifyDataSetChanged();
     }

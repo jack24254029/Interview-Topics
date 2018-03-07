@@ -88,6 +88,7 @@ public class MainPresenter implements IMainPresenter {
         // 先刪除全部資料
         Intent intent = new Intent(Constants.ACTION_DELETE_ALL_DATA);
         DBJobService.enqueueWork(context, intent);
+
         NetWorkController.getInstance().getWeatherOfWeek(context);
     }
 

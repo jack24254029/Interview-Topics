@@ -22,9 +22,6 @@ public class DBJobService extends JobIntentService {
     static final int JOB_ID = 999999;
     private WeatherDao weatherDao;
 
-    /**
-     * Convenience method for enqueuing work in to this service.
-     */
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, DBJobService.class, JOB_ID, work);
     }
@@ -57,7 +54,7 @@ public class DBJobService extends JobIntentService {
                 break;
             case Constants.ACTION_DELETE_DATA:
                 weatherDao.delete(weather);
-                Log.d(TAG, "onHandleWork: Delete Data, Uid:" + weather.getUid());
+                Log.d(TAG, "onHandleWork: Delete A Data");
                 break;
             case Constants.ACTION_DELETE_ALL_DATA:
                 weatherDao.deleteAll();

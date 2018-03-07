@@ -77,6 +77,7 @@ public class NetWorkController {
                 String[] weatherDatas = weatherDescription
                         .replace("溫度:", "")
                         .split("<BR>");
+                ArrayList<Weather> weatherArrayList = new ArrayList<>();
                 for (String data : weatherDatas) {
                     String[] weatherData = data.split(" ");
                     if (weatherData.length == 6) {
@@ -86,15 +87,22 @@ public class NetWorkController {
                         String temperature = weatherData[2] + weatherData[3] + weatherData[4];
                         String description = weatherData[5];
                         Weather weather = new Weather(date, dayOrNight, temperature, description);
+                        weatherArrayList.add(weather);
                         // 新增資料
                         Intent intent = new Intent(Constants.ACTION_INSERT_DATA);
                         intent.putExtra(context.getString(R.string.key_weather_data), weather);
                         DBJobService.enqueueWork(context, intent);
                     }
                 }
-                // 新增完畢後，取得全部資料傳給View
+                // 1.新增完畢後，透過DB將資料傳給View
+                /*
                 Intent intent = new Intent(Constants.ACTION_GET_ALL_DATA);
                 DBJobService.enqueueWork(context, intent);
+                */
+                // 2.解析完，物件放入集合，直接透過廣播傳出去
+                Intent intent = new Intent(Constants.ACTION_GET_WEATHER_OF_WEEK);
+                intent.putExtra(context.getString(R.string.key_weather_of_week), weatherArrayList);
+                context.sendBroadcast(intent);
             }
 
             @Override
